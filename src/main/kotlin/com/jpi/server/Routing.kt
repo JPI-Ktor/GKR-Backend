@@ -1,4 +1,4 @@
-package com.jpi.plugins
+package com.jpi.server
 
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
