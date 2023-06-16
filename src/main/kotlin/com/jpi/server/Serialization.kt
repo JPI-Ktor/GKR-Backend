@@ -1,4 +1,4 @@
-package com.jpi.plugins
+package com.jpi.server
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
