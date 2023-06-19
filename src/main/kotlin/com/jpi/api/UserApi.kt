@@ -15,13 +15,13 @@ fun Route.userRoute() {
     get("user") {
         val email = ""
         val student = getStudentUseCase(email = email)
-            ?: call.respond(HttpStatusCode.NotFound)
+            ?: call.respondText(status = HttpStatusCode.NotFound, text = "유저를 찾을 수 없습니다.")
 
         call.respond(HttpStatusCode.OK, student)
     }
     get("user/all") {
         val allStudents = getAllStudentUseCase()
 
-        call.respond(HttpStatusCode.OK, allStudents)
+        call.respond(status = HttpStatusCode.OK, message = allStudents)
     }
 }
