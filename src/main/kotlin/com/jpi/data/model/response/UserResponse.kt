@@ -5,6 +5,7 @@ import com.jpi.domain.model.response.UserResponse
 import org.jetbrains.exposed.sql.ResultRow
 
 fun ResultRow.asUserResponse() = UserResponse(
+    id = this[User.id],
     email = this[User.email],
     name = this[User.name],
     grade = this[User.grade],

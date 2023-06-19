@@ -1,18 +1,23 @@
 package com.jpi.api
 
+import com.jpi.data.model.request.UserRequest
 import com.jpi.domain.usecase.auth.GetEmailByTokenUseCase
 import com.jpi.domain.usecase.user.GetAllStudentUseCase
 import com.jpi.domain.usecase.user.GetStudentUseCase
+import com.jpi.domain.usecase.user.RestrictRentalUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import java.util.UUID
 
 fun Route.userRoute() {
     val getStudentUseCase: GetStudentUseCase by inject()
     val getAllStudentUseCase: GetAllStudentUseCase by inject()
     val getEmailByTokenUseCase: GetEmailByTokenUseCase by inject()
+    val restrictRentalUseCase: RestrictRentalUseCase by inject()
 
     val tokenPrefix = "Bearer "
 
@@ -35,5 +40,13 @@ fun Route.userRoute() {
         val allStudents = getAllStudentUseCase()
 
         call.respond(status = HttpStatusCode.OK, message = allStudents)
+    }
+    patch("user/restrict") {
+        val userRequest = call.receiveNullable<UserRequest>() ?: return@patch call.respondText(
+            status = HttpStatusCode.BadRequest,
+            text = "잘못된 요청입니다."
+        )
+        restrictRentalUseCase(id = UUID.fromString(userRequest.id))
+        call.respondText(status = HttpStatusCode.OK, text = "학생을 제재하였습니다.")
     }
 }

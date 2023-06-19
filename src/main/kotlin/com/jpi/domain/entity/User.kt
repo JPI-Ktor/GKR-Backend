@@ -4,6 +4,7 @@ import com.jpi.domain.Role
 import org.jetbrains.exposed.sql.Table
 
 object User: Table() {
+    val id = uuid("id")
     val email = varchar("email",  20)
     val name = varchar("name", 20)
     val grade = integer("grade").nullable()
@@ -13,5 +14,5 @@ object User: Table() {
     val role = enumerationByName("role", 14, Role::class)
     val isRentalRestricted = bool("is_rental_restricted")
 
-    override val primaryKey = PrimaryKey(email)
+    override val primaryKey = PrimaryKey(id)
 }

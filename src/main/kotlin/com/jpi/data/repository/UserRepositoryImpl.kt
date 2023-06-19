@@ -7,6 +7,8 @@ import com.jpi.domain.repository.UserRepository
 import com.jpi.server.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
+import java.util.*
 
 class UserRepositoryImpl: UserRepository {
     override suspend fun getStudent(email: String): UserResponse? = dbQuery {
@@ -17,5 +19,11 @@ class UserRepositoryImpl: UserRepository {
 
     override suspend fun getAllStudents(): List<UserResponse> = dbQuery {
         User.selectAll().map { it.asUserResponse() }
+    }
+
+    override suspend fun restrictRental(id: UUID): Unit = dbQuery {
+        User.update({User.id eq id}) {
+            it[isRentalRestricted] = true
+        }
     }
 }

@@ -15,6 +15,7 @@ import io.ktor.http.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import java.time.LocalDateTime
+import java.util.UUID
 
 class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
     override suspend fun signIn(signInRequest: SignInRequest): TokenResponse {
@@ -81,6 +82,7 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
 
         if (userInfo == null) {
             User.insert {
+                it[id] = UUID.randomUUID()
                 it[email] = gAuthUserInfo.email
                 it[name] = gAuthUserInfo.name
                 it[grade] = gAuthUserInfo.grade
