@@ -5,12 +5,14 @@ import com.jpi.domain.usecase.auth.ReissueTokenUseCase
 import com.jpi.domain.usecase.auth.SignInUseCase
 import com.jpi.domain.usecase.user.GetAllStudentUseCase
 import com.jpi.domain.usecase.user.GetStudentUseCase
+import com.jpi.domain.usecase.user.RestrictRentalUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
     // User
     single { GetStudentUseCase(get()) }
     single { GetAllStudentUseCase(get()) }
+    single { RestrictRentalUseCase(get()) }
 
     // Auth
     single { ReissueTokenUseCase(get()) }
