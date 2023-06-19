@@ -42,7 +42,7 @@ fun Route.userRoute() {
         call.respond(status = HttpStatusCode.OK, message = allStudents)
     }
     patch("user/restrict") {
-        val userRequest = call.receiveNullable<UserRequest>()?: return@patch call.respondText(
+        val userRequest = call.receiveNullable<UserRequest>() ?: return@patch call.respondText(
             status = HttpStatusCode.BadRequest,
             text = "잘못된 요청입니다."
         )
