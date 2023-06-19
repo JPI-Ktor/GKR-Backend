@@ -25,7 +25,7 @@ fun Route.userRoute() {
             status = HttpStatusCode.Unauthorized,
             text = "유효하지 않은 토큰입니다."
         )
-        val email = getEmailByTokenUseCase(accessToken = accessToken.removePrefix("Bearer "))
+        val email = getEmailByTokenUseCase(accessToken = accessToken.removePrefix(tokenPrefix))
         val student = getStudentUseCase(email = email)
             ?: call.respondText(status = HttpStatusCode.NotFound, text = "유저를 찾을 수 없습니다.")
 
