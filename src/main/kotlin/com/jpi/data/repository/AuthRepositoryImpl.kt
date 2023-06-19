@@ -23,9 +23,9 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
             setBody(
                 GAuthSignInRequest(
                     code = signInRequest.code,
-                    clientId = "bc01ce725346420e94edd756071f6e1eaaed29c091014c01bd7296cb1c777ef3",
-                    clientSecret = "8d81967d3c054d069ba069d65bef5a1f87af77066a8d4848832ffb8efebf86a9",
-                    redirectUri = "http://localhost:8080"
+                    clientSecret = System.getenv("CLIENT_SECRET"),
+                    clientId = System.getenv("CLIENT_ID"),
+                    redirectUri = System.getenv("REDIRECT_URI")
                 )
             )
         }.body<GAuthTokenResponse>()
