@@ -1,5 +1,6 @@
 package com.jpi.data.repository
 
+import com.jpi.data.model.response.asEquipmentResponse
 import com.jpi.domain.entity.Equipment
 import com.jpi.domain.model.request.EquipmentRequest
 import com.jpi.domain.model.response.EquipmentResponse
@@ -50,12 +51,3 @@ class EquipmentRepositoryImpl: EquipmentRepository {
         Equipment.deleteWhere { Equipment.productNumber eq productNumber } > 0
     }
 }
-
-fun ResultRow.asEquipmentResponse() = EquipmentResponse (
-        productNumber = this[Equipment.productNumber],
-        name = this[Equipment.name],
-        image = this[Equipment.image],
-        description = this[Equipment.description],
-        numberLeft = this[Equipment.numberLeft],
-        rentStatus = this[Equipment.rentStatus]
-)
