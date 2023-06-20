@@ -3,6 +3,7 @@ package com.jpi.di
 import com.jpi.domain.usecase.auth.GetEmailByTokenUseCase
 import com.jpi.domain.usecase.auth.ReissueTokenUseCase
 import com.jpi.domain.usecase.auth.SignInUseCase
+import com.jpi.domain.usecase.equipment.*
 import com.jpi.domain.usecase.user.GetAllStudentUseCase
 import com.jpi.domain.usecase.user.GetStudentUseCase
 import com.jpi.domain.usecase.user.RestrictRentalUseCase
@@ -18,4 +19,12 @@ val useCaseModule = module {
     single { ReissueTokenUseCase(get()) }
     single { SignInUseCase(get()) }
     single { GetEmailByTokenUseCase(get()) }
+
+    // equipment
+    single { GetAllEquipmentUseCase(get()) }
+    single { GetNotRentEquipmentUseCase(get()) }
+    single { GetIsRentEquipmentUseCase(get()) }
+    single { EquipmentInfoUseCase(get()) }
+    single { AddEquipmentUseCase(get()) }
+    single { DeleteEquipmentUseCase(get()) }
 }
