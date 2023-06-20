@@ -1,6 +1,7 @@
 package com.jpi.data.repository
 
 import com.jpi.data.model.response.asUserResponse
+import com.jpi.domain.Role
 import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
 import com.jpi.domain.model.response.GAuthUserResponse
@@ -48,5 +49,14 @@ class UserRepositoryImpl(private val client: HttpClient): UserRepository {
         RefreshToken.update({RefreshToken.id eq id}) {
             it[refreshToken] = ""
         }
+    }
+
+    override suspend fun isAdmin(accessToken: String): Boolean {
+        val gAuthUserInfo = client.get("https://open.gauth.co.kr/user") {
+            contentType(ContentType.Application.Json)
+            header(HttpHeaders.Authorization, "Bearer $accessToken")
+        }.body<GAuthUserResponse>()
+
+        return gAuthUserInfo.role == Role.ROLE_TEACHER
     }
 }
