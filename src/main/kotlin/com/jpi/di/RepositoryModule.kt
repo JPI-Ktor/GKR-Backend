@@ -7,6 +7,6 @@ import com.jpi.domain.repository.UserRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<UserRepository> { UserRepositoryImpl() }
+    single<UserRepository> { UserRepositoryImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 }
