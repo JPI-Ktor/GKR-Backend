@@ -1,5 +1,7 @@
 package com.jpi.data.repository
 
+import com.jpi.data.model.response.asUserResponse
+import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
 import com.jpi.domain.model.request.GAuthSignInRequest
 import com.jpi.domain.model.request.SignInRequest
@@ -14,6 +16,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -40,7 +43,7 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         val accessTokenExp = currentTime.plusMinutes(15)
         val refreshTokenExp = currentTime.plusDays(7)
 
-        createUser(gAuthUserInfo = gAuthUserInfo)
+        createUserOrRefreshToken(gAuthUserInfo = gAuthUserInfo, gAuthToken.refreshToken)
 
         return TokenResponse(
             accessToken = gAuthToken.accessToken,
@@ -77,12 +80,29 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         return gAuthUserInfo.email
     }
 
-    private suspend fun createUser(gAuthUserInfo: GAuthUserResponse) = dbQuery {
-        val userInfo = User.select { User.email eq gAuthUserInfo.email }.singleOrNull()
+    override suspend fun isTokenValid(accessToken: String): Boolean = dbQuery {
+        val gAuthUserInfo = client.get("https://open.gauth.co.kr/user") {
+            contentType(ContentType.Application.Json)
+            header(HttpHeaders.Authorization, "Bearer $accessToken")
+        }.body<GAuthUserResponse>()
 
+        val uuid = User.select { User.email eq gAuthUserInfo.email }
+            .map { it[User.id] }
+            .single()
+
+        val refreshToken = RefreshToken.select { RefreshToken.id eq uuid }
+            .map { it[RefreshToken.refreshToken] }
+            .single()
+
+        refreshToken != ""
+    }
+
+    private suspend fun createUserOrRefreshToken(gAuthUserInfo: GAuthUserResponse, refreshToken: String) = dbQuery {
+        val userInfo = User.select { User.email eq gAuthUserInfo.email }.map { it.asUserResponse() }.singleOrNull()
+        val uuid = UUID.randomUUID()
         if (userInfo == null) {
             User.insert {
-                it[id] = UUID.randomUUID()
+                it[id] = uuid
                 it[email] = gAuthUserInfo.email
                 it[name] = gAuthUserInfo.name
                 it[grade] = gAuthUserInfo.grade
@@ -91,6 +111,14 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
                 it[profileUrl] = gAuthUserInfo.profileUrl
                 it[role] = gAuthUserInfo.role
                 it[isRentalRestricted] = false
+            }
+            RefreshToken.insert {
+                it[id] = uuid
+                it[RefreshToken.refreshToken] = refreshToken
+            }
+        } else {
+            RefreshToken.update({RefreshToken.id eq userInfo.id }) {
+               it[RefreshToken.refreshToken] = refreshToken
             }
         }
     }
