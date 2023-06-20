@@ -9,4 +9,6 @@ interface AuthRepository {
     suspend fun reissueToken(refreshToken: String): TokenResponse
 
     suspend fun getEmailByToken(accessToken: String): String
+
+    suspend fun isTokenValid(accessToken: String): Boolean
 }

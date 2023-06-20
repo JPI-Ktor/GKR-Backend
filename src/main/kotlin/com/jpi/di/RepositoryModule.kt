@@ -9,7 +9,7 @@ import com.jpi.domain.repository.EquipmentRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<UserRepository> { UserRepositoryImpl() }
+    single<UserRepository> { UserRepositoryImpl(get()) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single<EquipmentRepository> { EquipmentRepositoryImpl() }
 }
