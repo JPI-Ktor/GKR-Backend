@@ -8,5 +8,6 @@ data class OrderRequest(
     val userId: String,
 //    val id: String,
     val reason: String,
-    val state: State
+    val state: State,
+    val date: String
 )
