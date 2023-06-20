@@ -61,7 +61,7 @@ fun Route.userRoute() {
             status = HttpStatusCode.Unauthorized,
             text = "유효하지 않은 토큰입니다."
         )
-        val uuid = getUUIDUseCase(accessToken) ?: return@delete call.respondText(
+        val uuid = getUUIDUseCase(accessToken.removePrefix(tokenPrefix)) ?: return@delete call.respondText(
             status = HttpStatusCode.NotFound,
             text = "유저를 찾을 수 없습니다."
         )
