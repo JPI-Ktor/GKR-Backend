@@ -1,5 +1,6 @@
 package com.jpi.data.repository
 
+import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
 import com.jpi.domain.model.request.GAuthSignInRequest
 import com.jpi.domain.model.request.SignInRequest
@@ -40,7 +41,7 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         val accessTokenExp = currentTime.plusMinutes(15)
         val refreshTokenExp = currentTime.plusDays(7)
 
-        createUser(gAuthUserInfo = gAuthUserInfo)
+        createUser(gAuthUserInfo = gAuthUserInfo, gAuthToken.refreshToken)
 
         return TokenResponse(
             accessToken = gAuthToken.accessToken,
@@ -77,12 +78,12 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         return gAuthUserInfo.email
     }
 
-    private suspend fun createUser(gAuthUserInfo: GAuthUserResponse) = dbQuery {
+    private suspend fun createUser(gAuthUserInfo: GAuthUserResponse, refreshToken: String) = dbQuery {
         val userInfo = User.select { User.email eq gAuthUserInfo.email }.singleOrNull()
-
+        val uuid = UUID.randomUUID()
         if (userInfo == null) {
             User.insert {
-                it[id] = UUID.randomUUID()
+                it[id] = uuid
                 it[email] = gAuthUserInfo.email
                 it[name] = gAuthUserInfo.name
                 it[grade] = gAuthUserInfo.grade
@@ -91,6 +92,10 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
                 it[profileUrl] = gAuthUserInfo.profileUrl
                 it[role] = gAuthUserInfo.role
                 it[isRentalRestricted] = false
+            }
+            RefreshToken.insert {
+                it[id] = uuid
+                it[RefreshToken.refreshToken] = refreshToken
             }
         }
     }
