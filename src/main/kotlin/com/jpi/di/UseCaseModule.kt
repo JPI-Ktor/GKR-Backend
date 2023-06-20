@@ -3,9 +3,7 @@ package com.jpi.di
 import com.jpi.domain.usecase.auth.GetEmailByTokenUseCase
 import com.jpi.domain.usecase.auth.ReissueTokenUseCase
 import com.jpi.domain.usecase.auth.SignInUseCase
-import com.jpi.domain.usecase.user.GetAllStudentUseCase
-import com.jpi.domain.usecase.user.GetStudentUseCase
-import com.jpi.domain.usecase.user.RestrictRentalUseCase
+import com.jpi.domain.usecase.user.*
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -13,6 +11,8 @@ val useCaseModule = module {
     single { GetStudentUseCase(get()) }
     single { GetAllStudentUseCase(get()) }
     single { RestrictRentalUseCase(get()) }
+    single { GetUUIDUseCase(get()) }
+    single { LogoutUseCase(get()) }
 
     // Auth
     single { ReissueTokenUseCase(get()) }
