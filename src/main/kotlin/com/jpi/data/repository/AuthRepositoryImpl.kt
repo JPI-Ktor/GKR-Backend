@@ -1,5 +1,6 @@
 package com.jpi.data.repository
 
+import com.jpi.data.model.response.asUserResponse
 import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
 import com.jpi.domain.model.request.GAuthSignInRequest
@@ -15,6 +16,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -41,7 +43,7 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         val accessTokenExp = currentTime.plusMinutes(15)
         val refreshTokenExp = currentTime.plusDays(7)
 
-        createUser(gAuthUserInfo = gAuthUserInfo, gAuthToken.refreshToken)
+        createUserOrRefreshToken(gAuthUserInfo = gAuthUserInfo, gAuthToken.refreshToken)
 
         return TokenResponse(
             accessToken = gAuthToken.accessToken,
@@ -95,8 +97,8 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         refreshToken.toString() != ""
     }
 
-    private suspend fun createUser(gAuthUserInfo: GAuthUserResponse, refreshToken: String) = dbQuery {
-        val userInfo = User.select { User.email eq gAuthUserInfo.email }.singleOrNull()
+    private suspend fun createUserOrRefreshToken(gAuthUserInfo: GAuthUserResponse, refreshToken: String) = dbQuery {
+        val userInfo = User.select { User.email eq gAuthUserInfo.email }.map { it.asUserResponse() }.singleOrNull()
         val uuid = UUID.randomUUID()
         if (userInfo == null) {
             User.insert {
@@ -113,6 +115,10 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
             RefreshToken.insert {
                 it[id] = uuid
                 it[RefreshToken.refreshToken] = refreshToken
+            }
+        } else {
+            RefreshToken.update({RefreshToken.id eq userInfo.id }) {
+               it[RefreshToken.refreshToken] = refreshToken
             }
         }
     }
