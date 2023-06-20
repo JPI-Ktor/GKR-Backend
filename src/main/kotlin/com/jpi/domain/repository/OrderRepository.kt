@@ -1,6 +1,7 @@
 package com.jpi.domain.repository
 
 import com.jpi.domain.model.request.OrderRequest
+import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.response.OrderResponse
 
 interface OrderRepository {
@@ -8,7 +9,7 @@ interface OrderRepository {
 
     suspend fun postReturnRequest(orderRequest: OrderRequest)
 
-    suspend fun postExtensionRequest(orderRequest: OrderRequest)
+    suspend fun postExtensionRequest(extensionRequest: ExtensionRequest)
 
     suspend fun getRentalRequestList(): List<OrderResponse>
 
