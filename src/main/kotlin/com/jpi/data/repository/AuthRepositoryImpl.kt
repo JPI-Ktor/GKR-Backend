@@ -78,6 +78,23 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
         return gAuthUserInfo.email
     }
 
+    override suspend fun isTokenValid(accessToken: String): Boolean = dbQuery {
+        val gAuthUserInfo = client.get("https://open.gauth.co.kr/user") {
+            contentType(ContentType.Application.Json)
+            header(HttpHeaders.Authorization, "Bearer $accessToken")
+        }.body<GAuthUserResponse>()
+
+        val uuid = User.select { User.email eq gAuthUserInfo.email }
+            .map { it[User.id] }
+            .single()
+
+        val refreshToken = RefreshToken.select { RefreshToken.id eq uuid }
+            .map { it[User.id] }
+            .single()
+
+        refreshToken.toString() != ""
+    }
+
     private suspend fun createUser(gAuthUserInfo: GAuthUserResponse, refreshToken: String) = dbQuery {
         val userInfo = User.select { User.email eq gAuthUserInfo.email }.singleOrNull()
         val uuid = UUID.randomUUID()

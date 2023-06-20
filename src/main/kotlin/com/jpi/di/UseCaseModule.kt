@@ -1,6 +1,7 @@
 package com.jpi.di
 
 import com.jpi.domain.usecase.auth.GetEmailByTokenUseCase
+import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.auth.ReissueTokenUseCase
 import com.jpi.domain.usecase.auth.SignInUseCase
 import com.jpi.domain.usecase.user.*
@@ -18,4 +19,5 @@ val useCaseModule = module {
     single { ReissueTokenUseCase(get()) }
     single { SignInUseCase(get()) }
     single { GetEmailByTokenUseCase(get()) }
+    single { IsTokenValidUseCase(get()) }
 }
