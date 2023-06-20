@@ -1,6 +1,6 @@
 package com.jpi.domain.entity
 
-import com.jpi.domain.Role
+import com.jpi.domain.util.Role
 import org.jetbrains.exposed.sql.Table
 
 object User: Table() {
