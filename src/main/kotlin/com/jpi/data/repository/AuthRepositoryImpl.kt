@@ -91,10 +91,10 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
             .single()
 
         val refreshToken = RefreshToken.select { RefreshToken.id eq uuid }
-            .map { it[User.id] }
+            .map { it[RefreshToken.refreshToken] }
             .single()
 
-        refreshToken.toString() != ""
+        refreshToken != ""
     }
 
     private suspend fun createUserOrRefreshToken(gAuthUserInfo: GAuthUserResponse, refreshToken: String) = dbQuery {
