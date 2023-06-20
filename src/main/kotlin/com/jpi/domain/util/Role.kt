@@ -1,4 +1,4 @@
-package com.jpi.domain
+package com.jpi.domain.util
 
 enum class Role {
     ROLE_STUDENT,
