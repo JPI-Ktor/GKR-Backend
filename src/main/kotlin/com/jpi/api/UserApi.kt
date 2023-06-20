@@ -20,6 +20,7 @@ fun Route.userRoute() {
     val getUUIDUseCase: GetUUIDUseCase by inject()
     val logoutUseCase: LogoutUseCase by inject()
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
+    val isAdminUseCase: IsAdminUseCase by inject()
 
     val tokenPrefix = "Bearer "
 
@@ -40,14 +41,38 @@ fun Route.userRoute() {
         call.respond(HttpStatusCode.OK, student)
     }
     get("user/all") {
+        val accessToken = call.request.headers[HttpHeaders.Authorization] ?: return@get call.respondText(
+            status = HttpStatusCode.BadRequest,
+            text = "잘못된 요청입니다."
+        )
+        if (!accessToken.startsWith(tokenPrefix) || !isTokenValidUseCase(accessToken)) call.respondText(
+            status = HttpStatusCode.Unauthorized,
+            text = "유효하지 않은 토큰입니다."
+        )
+        if (!isAdminUseCase(accessToken)) call.respondText(
+            status = HttpStatusCode.Forbidden,
+            text = "권한이 없습니다."
+        )
         val allStudents = getAllStudentUseCase()
 
         call.respond(status = HttpStatusCode.OK, message = allStudents)
     }
     patch("user/restrict") {
+        val accessToken = call.request.headers[HttpHeaders.Authorization] ?: return@patch call.respondText(
+            status = HttpStatusCode.BadRequest,
+            text = "잘못된 요청입니다."
+        )
+        if (!accessToken.startsWith(tokenPrefix) || !isTokenValidUseCase(accessToken)) call.respondText(
+            status = HttpStatusCode.Unauthorized,
+            text = "유효하지 않은 토큰입니다."
+        )
         val userRequest = call.receiveNullable<UserRequest>() ?: return@patch call.respondText(
             status = HttpStatusCode.BadRequest,
             text = "잘못된 요청입니다."
+        )
+        if (!isAdminUseCase(accessToken)) call.respondText(
+            status = HttpStatusCode.Forbidden,
+            text = "권한이 없습니다."
         )
         restrictRentalUseCase(id = UUID.fromString(userRequest.id))
         call.respondText(status = HttpStatusCode.OK, text = "학생을 제재하였습니다.")

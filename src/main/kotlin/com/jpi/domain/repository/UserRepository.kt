@@ -13,4 +13,6 @@ interface UserRepository {
     suspend fun getUUID(accessToken: String): UUID?
 
     suspend fun logout(id: UUID)
+
+    suspend fun isAdmin(accessToken: String): Boolean
 }
