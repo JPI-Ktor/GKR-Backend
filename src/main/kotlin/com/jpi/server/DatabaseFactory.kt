@@ -1,5 +1,6 @@
 package com.jpi.server
 
+import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -17,7 +18,7 @@ object DatabaseFactory {
         val database = Database.connect(jdbcURL, driverClassName, user, password)
 
         transaction(database) {
-            SchemaUtils.create(User)
+            SchemaUtils.create(User, RefreshToken)
         }
     }
 
