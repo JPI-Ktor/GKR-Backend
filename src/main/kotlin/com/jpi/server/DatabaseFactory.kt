@@ -1,5 +1,6 @@
 package com.jpi.server
 
+import com.jpi.domain.entity.Order
 import com.jpi.domain.entity.Equipment
 import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
@@ -19,7 +20,7 @@ object DatabaseFactory {
         val database = Database.connect(jdbcURL, driverClassName, user, password)
 
         transaction(database) {
-            SchemaUtils.create(User, RefreshToken, Equipment)
+            SchemaUtils.create(User, RefreshToken, Order, Equipment)
         }
     }
 
