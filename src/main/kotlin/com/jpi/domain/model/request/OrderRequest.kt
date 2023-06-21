@@ -9,7 +9,7 @@ import java.util.UUID
 data class OrderRequest(
     @Serializable(with = UUIDSerializer::class)
     val userId: UUID,
-//    val id: String,
+    val equipmentId: String,
     val reason: String,
     val state: State,
 )

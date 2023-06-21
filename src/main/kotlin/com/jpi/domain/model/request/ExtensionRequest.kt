@@ -8,5 +8,5 @@ import java.util.*
 data class ExtensionRequest(
     @Serializable(with = UUIDSerializer::class)
     val userId: UUID,
-//    val id: String
+    val equipmentId: String
 )
