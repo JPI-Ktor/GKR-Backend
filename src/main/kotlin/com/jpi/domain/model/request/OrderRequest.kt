@@ -2,6 +2,7 @@ package com.jpi.domain.model.request
 
 import com.jpi.domain.util.State
 import com.jpi.domain.model.util.UUIDSerializer
+import com.jpi.domain.util.Decide
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
@@ -12,4 +13,5 @@ data class OrderRequest(
     val equipmentId: String,
     val reason: String,
     val state: State,
+    val decision: Decide
 )

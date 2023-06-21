@@ -18,4 +18,6 @@ interface OrderRepository {
     suspend fun getReturnRequestList(): List<OrderResponse>
 
     suspend fun getRentalEquipment(userId: UUID): List<EquipmentResponse>
+
+    suspend fun decideAcceptOrReject(orderRequest: OrderRequest, extensionRequest: ExtensionRequest)
 }
