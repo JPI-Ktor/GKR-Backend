@@ -13,7 +13,7 @@ suspend fun PipelineContext<*, ApplicationCall>.getAccessToken(
     val accessToken = call.request.headers[HttpHeaders.Authorization]
 
     if (accessToken == null) {
-        call.respondText(status = HttpStatusCode.BadRequest, text = "잘못된 요청입니다.")
+        call.respondText(status = HttpStatusCode.BadRequest, text = "토큰 값이 올바르지 않습니다.")
         return null
     }
 
