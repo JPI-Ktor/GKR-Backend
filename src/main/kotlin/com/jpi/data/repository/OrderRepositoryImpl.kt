@@ -25,15 +25,15 @@ class OrderRepositoryImpl: OrderRepository {
             it[this.equipmentId] = orderRequest.equipmentId
             it[this.rentalReason] = orderRequest.reason
             it[this.rentalDate] = LocalDateTime.now()
-            it[this.rentalState] = State.RENTAL_STATE
+            it[this.rentalState] = State.WAITING_STATE
             it[this.returnDate] = LocalDateTime.now().plusMonths(1)
         }
     }
 
     override suspend fun postReturnRequest(orderRequest: OrderRequest): Unit = dbQuery {
         Order.update({ (Order.userId eq orderRequest.userId) and (Order.equipmentId eq orderRequest.equipmentId) }) {
-            it[this.rentalState] = State.RETURN_STATE
-            it[this.returnDate] = LocalDateTime.now()
+            it[this.rentalState] = State.WAITING_STATE
+//            it[this.returnDate] = LocalDateTime.now()
         }
     }
 
@@ -41,7 +41,8 @@ class OrderRepositoryImpl: OrderRepository {
         val date = Order.select { (Order.userId eq extensionRequest.userId) and (Order.equipmentId eq extensionRequest.equipmentId) }.map { it[Order.returnDate] }.single()
 
         Order.update({ (Order.userId eq extensionRequest.userId) and (Order.equipmentId eq extensionRequest.equipmentId) }) {
-            it[this.returnDate] = date.plusMonths(1)
+            it[this.rentalState] = State.WAITING_STATE
+//            it[this.returnDate] = date.plusMonths(1)
         }
     }
 
