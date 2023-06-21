@@ -9,6 +9,5 @@ fun ResultRow.asEquipmentResponse() = EquipmentResponse (
     name = this[Equipment.name],
     image = this[Equipment.image],
     description = this[Equipment.description],
-    numberLeft = this[Equipment.numberLeft],
     rentStatus = this[Equipment.rentStatus]
 )
