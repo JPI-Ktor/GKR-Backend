@@ -14,25 +14,27 @@ fun Route.authRoute() {
     val signInUseCase: SignInUseCase by inject()
     val reissueTokenUseCase: ReissueTokenUseCase by inject()
 
-    post("auth/signin") {
-        val signInRequest = call.receiveNullable<SignInRequest>() ?: return@post call.respondText(
-            status = HttpStatusCode.BadRequest,
-            text = "잘못된 요청입니다."
-        )
+    route("auth") {
+        post("/signin") {
+            val signInRequest = call.receiveNullable<SignInRequest>() ?: return@post call.respondText(
+                status = HttpStatusCode.BadRequest,
+                text = "잘못된 요청입니다."
+            )
 
-        val token = signInUseCase(signInRequest = signInRequest)
+            val token = signInUseCase(signInRequest = signInRequest)
 
-        call.respond(status = HttpStatusCode.OK, message = token)
-    }
+            call.respond(status = HttpStatusCode.OK, message = token)
+        }
 
-    patch("auth/reissue") {
-        val refreshToken = call.request.headers["Refresh-Token"] ?: return@patch call.respondText(
-            status = HttpStatusCode.BadRequest,
-            text = "잘못된 요청입니다."
-        )
+        patch("/reissue") {
+            val refreshToken = call.request.headers["Refresh-Token"] ?: return@patch call.respondText(
+                status = HttpStatusCode.BadRequest,
+                text = "잘못된 요청입니다."
+            )
 
-        val token = reissueTokenUseCase(refreshToken = refreshToken)
+            val token = reissueTokenUseCase(refreshToken = refreshToken)
 
-        call.respond(status = HttpStatusCode.OK, message = token)
+            call.respond(status = HttpStatusCode.OK, message = token)
+        }
     }
 }
