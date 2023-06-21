@@ -5,6 +5,7 @@ import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.request.OrderRequest
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.order.*
+import com.jpi.domain.usecase.user.GetUUIDUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -19,6 +20,8 @@ fun Route.orderRoute() {
     val postRentalRequestUseCase: PostRentalRequestUseCase by inject()
     val postReturnRequestUseCase: PostReturnRequestUseCase by inject()
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
+    val getRentalEquipmentUseCase: GetRentalEquipmentUseCase by inject()
+    val getUUIDUseCase: GetUUIDUseCase by inject()
 
     route("/order") {
         get("/rental") {
@@ -54,6 +57,13 @@ fun Route.orderRoute() {
             val orderRequest = call.receive<ExtensionRequest>()
             val extensionRequest = postExtensionRequestUseCase(orderRequest)
             call.respond(HttpStatusCode.OK, extensionRequest)
+        }
+
+        get {
+           val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
+            val userId = getUUIDUseCase(accessToken) ?: return@get call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val equipmentList = getRentalEquipmentUseCase(userId)
+            call.respond(HttpStatusCode.OK, equipmentList)
         }
     }
 }
