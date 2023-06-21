@@ -9,7 +9,7 @@ object Order: Table() {
     val equipmentId = varchar("product_number", 20).references(Equipment.productNumber)
     val rentalReason = varchar("rental_reason", 100)
     val rentalDate = datetime("rental_date")
-    val rentalState = enumerationByName("rental_state", 12, State::class)
+    val rentalState = enumerationByName("rental_state", 15, State::class)
     val returnDate = datetime("return_date")
 
     override val primaryKey = PrimaryKey(userId, equipmentId)
