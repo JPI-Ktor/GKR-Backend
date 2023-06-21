@@ -4,6 +4,7 @@ import com.jpi.domain.usecase.auth.GetEmailByTokenUseCase
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.auth.ReissueTokenUseCase
 import com.jpi.domain.usecase.auth.SignInUseCase
+import com.jpi.domain.usecase.equipment.*
 import com.jpi.domain.usecase.user.*
 import org.koin.dsl.module
 
@@ -21,4 +22,12 @@ val useCaseModule = module {
     single { SignInUseCase(get()) }
     single { GetEmailByTokenUseCase(get()) }
     single { IsTokenValidUseCase(get()) }
+
+    // equipment
+    single { GetAllEquipmentUseCase(get()) }
+    single { GetNotRentEquipmentUseCase(get()) }
+    single { GetIsRentEquipmentUseCase(get()) }
+    single { EquipmentInfoUseCase(get()) }
+    single { AddEquipmentUseCase(get()) }
+    single { DeleteEquipmentUseCase(get()) }
 }

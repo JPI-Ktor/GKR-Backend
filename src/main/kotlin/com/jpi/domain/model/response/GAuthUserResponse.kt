@@ -1,6 +1,6 @@
 package com.jpi.domain.model.response
 
-import com.jpi.domain.Role
+import com.jpi.domain.util.Role
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
