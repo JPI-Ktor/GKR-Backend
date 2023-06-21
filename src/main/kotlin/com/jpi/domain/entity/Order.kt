@@ -10,6 +10,7 @@ object Order: Table() {
     val rentalReason = varchar("rental_reason", 100)
     val rentalDate = datetime("rental_date")
     val rentalState = enumerationByName("rental_state", 12, State::class)
+    val returnDate = datetime("return_date")
 
     override val primaryKey = PrimaryKey(userId)
     // override val primaryKey = PrimaryKey(userId, id)

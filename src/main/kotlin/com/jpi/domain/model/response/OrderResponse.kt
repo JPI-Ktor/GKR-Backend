@@ -12,5 +12,6 @@ data class OrderResponse(
 //    val id: String,
     val reason: String,
     val state: State,
-    val date: String
+    val rentalDate: String,
+    val returnDate: String
 )

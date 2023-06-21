@@ -8,5 +8,6 @@ fun ResultRow.asOrderResponse() = OrderResponse(
     userId = this[Order.userId],
     reason = this[Order.rentalReason],
     state = this[Order.rentalState],
-    date =  this[Order.rentalDate].toString()
+    rentalDate =  this[Order.rentalDate].toString(),
+    returnDate = this[Order.returnDate].toString()
 )

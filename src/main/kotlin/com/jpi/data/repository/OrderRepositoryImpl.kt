@@ -18,25 +18,24 @@ class OrderRepositoryImpl: OrderRepository {
         Order.insert {
             it[this.userId] = orderRequest.userId
             it[this.rentalReason] = orderRequest.reason
-            it[this.rentalDate] = LocalDateTime.now().plusMonths(1)
+            it[this.rentalDate] = LocalDateTime.now()
             it[this.rentalState] = State.RENTAL_STATE
+            it[this.returnDate] = LocalDateTime.now().plusMonths(1)
         }
     }
 
     override suspend fun postReturnRequest(orderRequest: OrderRequest): Unit = dbQuery {
-        Order.insert {
-            it[this.userId] = orderRequest.userId
-            it[this.rentalReason] = orderRequest.reason
-            it[this.rentalDate] = LocalDateTime.now().plusMonths(1)
+        Order.update({ Order.userId eq orderRequest.userId }) {
             it[this.rentalState] = State.RETURN_STATE
+            it[this.returnDate] = LocalDateTime.now()
         }
     }
 
     override suspend fun postExtensionRequest(extensionRequest: ExtensionRequest) {
-        val date = Order.select { Order.userId eq extensionRequest.userId }.map { it[Order.rentalDate] }.single()
+        val date = Order.select { Order.userId eq extensionRequest.userId }.map { it[Order.returnDate] }.single()
 
         Order.update({ Order.userId eq extensionRequest.userId }) {
-            it[this.rentalDate] = date.plusMonths(1)
+            it[this.returnDate] = date.plusMonths(1)
         }
     }
 
