@@ -9,6 +9,5 @@ data class EquipmentResponse(
     val name: String,
     val image: String,
     val description: String,
-    val numberLeft: Int,
     val rentStatus: RentStatus
 )

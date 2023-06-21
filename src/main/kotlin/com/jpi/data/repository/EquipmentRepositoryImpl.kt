@@ -41,8 +41,7 @@ class EquipmentRepositoryImpl: EquipmentRepository {
                 it[name] = equipmentRequest.name
                 it[image] = equipmentRequest.image
                 it[description] = equipmentRequest.description
-                it[numberLeft] = 10
-                it[rentStatus] = RentStatus.RENTING
+                it[rentStatus] = RentStatus.NOT_RENT
             }
         }
     }
