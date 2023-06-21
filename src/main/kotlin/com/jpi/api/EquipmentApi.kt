@@ -28,9 +28,9 @@ fun Route.equipmentRoute() {
             getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val getAll = getAllEquipmentUseCase()
 
-            if (getAll.isEmpty()) {
+            if (getAll.isEmpty())
                 return@get call.respondText(status = HttpStatusCode.NotFound, text = "기자재가 존재하지 않습니다.")
-            }
+
             call.respond(status = HttpStatusCode.OK, message = getAll)
         }
 
@@ -50,12 +50,18 @@ fun Route.equipmentRoute() {
             getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val getNotRent = getNotRentEquipmentUseCase()
 
+            if (getNotRent.isEmpty())
+                return@get call.respondText(status = HttpStatusCode.NotFound, text = "기자재가 존재하지 않습니다.")
+
             call.respond(status = HttpStatusCode.OK, message = getNotRent)
         }
 
         get("/isrent") {
             getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val getIsRent = getIsRentEquipmentUseCase()
+
+            if (getIsRent.isEmpty())
+                return@get call.respondText(status = HttpStatusCode.NotFound, text = "기자재가 존재하지 않습니다.")
 
             call.respond(status = HttpStatusCode.OK, message = getIsRent)
         }
