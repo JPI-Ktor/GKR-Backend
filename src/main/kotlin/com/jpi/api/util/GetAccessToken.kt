@@ -10,17 +10,17 @@ const val tokenPrefix = "Bearer "
 suspend fun PipelineContext<*, ApplicationCall>.getAccessToken(
     isTokenValidUseCase: suspend (String) -> Boolean
 ): String? {
-    val token = call.request.headers[HttpHeaders.Authorization]
+    val accessToken = call.request.headers[HttpHeaders.Authorization]
 
-    if (token == null) {
+    if (accessToken == null) {
         call.respondText(status = HttpStatusCode.BadRequest, text = "잘못된 요청입니다.")
         return null
     }
 
-    if (!token.startsWith(tokenPrefix) || !isTokenValidUseCase(token)) {
+    if (!accessToken.startsWith(tokenPrefix) || !isTokenValidUseCase(accessToken)) {
         call.respondText(status = HttpStatusCode.Unauthorized, text = "유효하지 않은 토큰입니다.")
         return null
     }
 
-    return token
+    return accessToken
 }
