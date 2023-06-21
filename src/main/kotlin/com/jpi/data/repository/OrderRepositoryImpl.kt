@@ -1,10 +1,13 @@
 package com.jpi.data.repository
 
+import com.jpi.data.model.response.asEquipmentResponse
 import com.jpi.data.model.response.asOrderResponse
+import com.jpi.domain.entity.Equipment
 import com.jpi.domain.util.State
 import com.jpi.domain.entity.Order
 import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.request.OrderRequest
+import com.jpi.domain.model.response.EquipmentResponse
 import com.jpi.domain.model.response.OrderResponse
 import com.jpi.domain.repository.OrderRepository
 import com.jpi.server.DatabaseFactory.dbQuery
@@ -13,6 +16,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 import java.time.LocalDateTime
+import java.util.UUID
 
 class OrderRepositoryImpl: OrderRepository {
     override suspend fun postRentalRequest(orderRequest: OrderRequest): Unit = dbQuery {
@@ -47,5 +51,12 @@ class OrderRepositoryImpl: OrderRepository {
 
     override suspend fun getReturnRequestList(): List<OrderResponse> = dbQuery {
         Order.select { Order.rentalState eq State.RETURN_STATE }.map { it.asOrderResponse() }
+    }
+
+    override suspend fun getRentalEquipment(userId: UUID): List<EquipmentResponse> = dbQuery {
+        val equipmentIdList = Order.select { Order.userId eq userId }.map { it[Order.equipmentId] }
+        equipmentIdList.map { equipmentId ->
+            Equipment.select { Equipment.productNumber eq equipmentId }.map { it.asEquipmentResponse() }.single()
+        }
     }
 }
