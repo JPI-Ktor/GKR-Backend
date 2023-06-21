@@ -1,13 +1,13 @@
 package com.jpi.domain.model.response
 
-import com.jpi.domain.util.RentStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EquipmentResponse(
+data class RepairResponse(
     val productNumber: String,
-    val name: String,
-    val image: String,
+    val reason: String,
     val description: String,
-    val rentStatus: RentStatus
+    val repairDate: String,
+    val cost: Int,
+    val comment: String
 )

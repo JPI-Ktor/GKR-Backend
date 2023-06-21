@@ -1,9 +1,6 @@
 package com.jpi.server
 
-import com.jpi.domain.entity.Order
-import com.jpi.domain.entity.Equipment
-import com.jpi.domain.entity.RefreshToken
-import com.jpi.domain.entity.User
+import com.jpi.domain.entity.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -20,7 +17,7 @@ object DatabaseFactory {
         val database = Database.connect(jdbcURL, driverClassName, user, password)
 
         transaction(database) {
-            SchemaUtils.create(User, RefreshToken, Order, Equipment)
+            SchemaUtils.create(User, RefreshToken, Order, Equipment, Repair)
         }
     }
 
