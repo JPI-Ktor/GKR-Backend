@@ -22,35 +22,35 @@ fun Route.orderRoute() {
 
     route("/order") {
         get("/rental") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@get call.respondText("Unauthorized AccessToken", status = HttpStatusCode.Unauthorized)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val rentalRequestList = getRentalRequestListUseCase()
             if (rentalRequestList.isEmpty()) return@get call.respondText("Not Found RentalRequestList", status = HttpStatusCode.NotFound)
             call.respond(HttpStatusCode.OK, rentalRequestList)
         }
 
         get("/return") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@get call.respondText("Unauthorized AccessToken", status = HttpStatusCode.Unauthorized)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val returnRequestList = getReturnRequestListUseCase()
             if (returnRequestList.isEmpty()) return@get call.respondText("Not Found ReturnRequestList", status = HttpStatusCode.NotFound)
             call.respond(HttpStatusCode.OK, returnRequestList)
         }
 
         post("/rental") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@post call.respondText("Unauthorized AccessToken", status = HttpStatusCode.Unauthorized)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val orderRequest = call.receive<OrderRequest>()
             val rentalRequest = postRentalRequestUseCase(orderRequest)
             call.respond(HttpStatusCode.OK, rentalRequest)
         }
 
         post("/return") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@post call.respondText("Unauthorized AccessToken", status = HttpStatusCode.Unauthorized)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val orderRequest = call.receive<OrderRequest>()
             val returnRequest = postReturnRequestUseCase(orderRequest)
             call.respond(HttpStatusCode.OK, returnRequest)
         }
 
         post("/extension") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@post call.respondText("Unauthorized AccessToken", status = HttpStatusCode.Unauthorized)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val orderRequest = call.receive<ExtensionRequest>()
             val extensionRequest = postExtensionRequestUseCase(orderRequest)
             call.respond(HttpStatusCode.OK, extensionRequest)
