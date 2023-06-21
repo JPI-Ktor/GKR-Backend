@@ -1,6 +1,6 @@
 package com.jpi.domain.entity
 
-import com.jpi.domain.State
+import com.jpi.domain.util.State
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 

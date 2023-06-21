@@ -1,6 +1,6 @@
 package com.jpi.domain.model.request
 
-import com.jpi.domain.State
+import com.jpi.domain.util.State
 import com.jpi.domain.model.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID

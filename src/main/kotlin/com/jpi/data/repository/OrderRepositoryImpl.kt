@@ -1,7 +1,7 @@
 package com.jpi.data.repository
 
 import com.jpi.data.model.response.asOrderResponse
-import com.jpi.domain.State
+import com.jpi.domain.util.State
 import com.jpi.domain.entity.Order
 import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.request.OrderRequest
