@@ -6,6 +6,10 @@ import com.jpi.domain.usecase.auth.ReissueTokenUseCase
 import com.jpi.domain.usecase.auth.SignInUseCase
 import com.jpi.domain.usecase.order.*
 import com.jpi.domain.usecase.equipment.*
+import com.jpi.domain.usecase.repair.AddRepairHistoryUseCase
+import com.jpi.domain.usecase.repair.DeleteRepairHistoryUseCase
+import com.jpi.domain.usecase.repair.GetRepairHistoryUseCase
+import com.jpi.domain.usecase.repair.ModifyRepairHistoryUseCase
 import com.jpi.domain.usecase.user.*
 import org.koin.dsl.module
 
@@ -23,6 +27,12 @@ val useCaseModule = module {
     single { SignInUseCase(get()) }
     single { GetEmailByTokenUseCase(get()) }
     single { IsTokenValidUseCase(get()) }
+
+    // Repair
+    single { AddRepairHistoryUseCase(get()) }
+    single { ModifyRepairHistoryUseCase(get()) }
+    single { DeleteRepairHistoryUseCase(get()) }
+    single { GetRepairHistoryUseCase(get()) }
 
     // equipment
     single { GetAllEquipmentUseCase(get()) }
