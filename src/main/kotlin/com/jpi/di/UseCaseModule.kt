@@ -15,6 +15,7 @@ val useCaseModule = module {
     single { RestrictRentalUseCase(get()) }
     single { GetUUIDUseCase(get()) }
     single { LogoutUseCase(get()) }
+    single { IsAdminUseCase(get()) }
 
     // Auth
     single { ReissueTokenUseCase(get()) }

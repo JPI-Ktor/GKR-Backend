@@ -1,5 +1,6 @@
 package com.jpi.api
 
+import com.jpi.api.util.getAccessToken
 import com.jpi.data.model.request.UserRequest
 import com.jpi.domain.usecase.auth.GetEmailByTokenUseCase
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
@@ -20,48 +21,42 @@ fun Route.userRoute() {
     val getUUIDUseCase: GetUUIDUseCase by inject()
     val logoutUseCase: LogoutUseCase by inject()
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
-
-    val tokenPrefix = "Bearer "
+    val isAdminUseCase: IsAdminUseCase by inject()
 
     get("user") {
-        val accessToken = call.request.headers[HttpHeaders.Authorization] ?: return@get call.respondText(
-            status = HttpStatusCode.BadRequest,
-            text = "잘못된 요청입니다."
-        )
-        if (!accessToken.startsWith(tokenPrefix) || !isTokenValidUseCase(accessToken)) call.respondText(
-            status = HttpStatusCode.Unauthorized,
-            text = "유효하지 않은 토큰입니다."
-        )
-
-        val email = getEmailByTokenUseCase(accessToken = accessToken.removePrefix(tokenPrefix))
+        val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
+        val email = getEmailByTokenUseCase(accessToken = accessToken)
         val student = getStudentUseCase(email = email)
             ?: call.respondText(status = HttpStatusCode.NotFound, text = "유저를 찾을 수 없습니다.")
 
         call.respond(HttpStatusCode.OK, student)
     }
     get("user/all") {
+        val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
+        if (!isAdminUseCase(accessToken)) call.respondText(
+            status = HttpStatusCode.Forbidden,
+            text = "권한이 없습니다."
+        )
         val allStudents = getAllStudentUseCase()
 
         call.respond(status = HttpStatusCode.OK, message = allStudents)
     }
     patch("user/restrict") {
+        val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@patch
         val userRequest = call.receiveNullable<UserRequest>() ?: return@patch call.respondText(
             status = HttpStatusCode.BadRequest,
             text = "잘못된 요청입니다."
+        )
+        if (!isAdminUseCase(accessToken)) call.respondText(
+            status = HttpStatusCode.Forbidden,
+            text = "권한이 없습니다."
         )
         restrictRentalUseCase(id = UUID.fromString(userRequest.id))
         call.respondText(status = HttpStatusCode.OK, text = "학생을 제재하였습니다.")
     }
     delete("user/logout") {
-        val accessToken = call.request.headers[HttpHeaders.Authorization] ?: return@delete call.respondText(
-            status = HttpStatusCode.BadRequest,
-            text = "잘못된 요청입니다."
-        )
-        if (!accessToken.startsWith(tokenPrefix)) call.respondText(
-            status = HttpStatusCode.Unauthorized,
-            text = "유효하지 않은 토큰입니다."
-        )
-        val uuid = getUUIDUseCase(accessToken.removePrefix(tokenPrefix)) ?: return@delete call.respondText(
+        val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@delete
+        val uuid = getUUIDUseCase(accessToken) ?: return@delete call.respondText(
             status = HttpStatusCode.NotFound,
             text = "유저를 찾을 수 없습니다."
         )
