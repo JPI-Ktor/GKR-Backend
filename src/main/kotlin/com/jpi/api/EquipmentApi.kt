@@ -1,7 +1,10 @@
 package com.jpi.api
 
+import com.jpi.api.util.getAccessToken
 import com.jpi.domain.model.request.EquipmentRequest
+import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.equipment.*
+import com.jpi.domain.usecase.user.IsAdminUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -17,8 +20,12 @@ fun Route.equipmentRoute() {
     val addEquipmentUseCase: AddEquipmentUseCase by inject()
     val deleteEquipmentUseCase: DeleteEquipmentUseCase by inject()
 
+    val isTokenValidUseCase: IsTokenValidUseCase by inject()
+    val isAdminUseCase: IsAdminUseCase by inject()
+
     route("/equipment") {
         get("/all") {
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val getAll = getAllEquipmentUseCase()
 
             if (getAll.isEmpty()) {
@@ -28,21 +35,26 @@ fun Route.equipmentRoute() {
         }
 
         post {
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val equipment = call.receiveNullable<EquipmentRequest>()
                     ?: return@post call.respondText(text = "잘못된 요청입니다.", status = HttpStatusCode.BadRequest)
+            if (!isAdminUseCase(accessToken))
+                return@post call.respondText(text = "권한이 없습니다.", status = HttpStatusCode.Forbidden)
 
-            val addEquipment = addEquipmentUseCase(equipment)
+            val addEquipment = addEquipmentUseCase(equipmentRequest = equipment)
 
             call.respond(status = HttpStatusCode.Created, message = addEquipment)
         }
 
         get("/notrent") {
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val getNotRent = getNotRentEquipmentUseCase()
 
             call.respond(status = HttpStatusCode.OK, message = getNotRent)
         }
 
         get("/isrent") {
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val getIsRent = getIsRentEquipmentUseCase()
 
             call.respond(status = HttpStatusCode.OK, message = getIsRent)
@@ -50,7 +62,8 @@ fun Route.equipmentRoute() {
 
         get("/{productNumber}") {
             val productNumber = call.parameters["productNumber"].toString()
-            val equipmentInfo = equipmentUseCase(productNumber)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
+            val equipmentInfo = equipmentUseCase(productNumber = productNumber)
                     ?: return@get call.respondText(text = "없는 기자재 입니다.", status = HttpStatusCode.NotFound)
 
             call.respond(status = HttpStatusCode.OK, message = equipmentInfo)
@@ -58,7 +71,11 @@ fun Route.equipmentRoute() {
 
         delete("/{productNumber}") {
             val productNum = call.parameters["productNumber"].toString()
-            val deleteEquipment = deleteEquipmentUseCase(productNum)
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@delete
+            if (!isAdminUseCase(accessToken))
+                return@delete call.respondText(text = "권한이 없습니다.", status = HttpStatusCode.Forbidden)
+
+            val deleteEquipment = deleteEquipmentUseCase(productNumber = productNum)
             if (!deleteEquipment) {
                 return@delete call.respondText(status = HttpStatusCode.NotFound, text = "없는 기자재 입니다.")
             }
