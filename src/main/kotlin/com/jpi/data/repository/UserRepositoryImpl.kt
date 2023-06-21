@@ -1,7 +1,7 @@
 package com.jpi.data.repository
 
 import com.jpi.data.model.response.asUserResponse
-import com.jpi.domain.Role
+import com.jpi.domain.util.Role
 import com.jpi.domain.entity.RefreshToken
 import com.jpi.domain.entity.User
 import com.jpi.domain.model.response.GAuthUserResponse
