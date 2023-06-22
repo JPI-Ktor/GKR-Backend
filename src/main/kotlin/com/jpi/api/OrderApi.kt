@@ -42,24 +42,24 @@ fun Route.orderRoute() {
             val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
             val orderRequestData = call.receive<OrderRequestData>()
-            val rentalRequest = postRentalRequestUseCase(orderRequestData.asOrderRequest(userId))
-            call.respond(HttpStatusCode.OK, rentalRequest)
+            postRentalRequestUseCase(orderRequestData.asOrderRequest(userId))
+            call.respondText("대여 요청이 완료되었습니다", status = HttpStatusCode.OK)
         }
 
         post("/return") {
             val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
             val orderRequestData = call.receive<OrderRequestData>()
-            val returnRequest = postReturnRequestUseCase(orderRequestData.asOrderRequest(userId))
-            call.respond(HttpStatusCode.OK, returnRequest)
+            postReturnRequestUseCase(orderRequestData.asOrderRequest(userId))
+            call.respondText("반납 요청이 완료되었습니다", status = HttpStatusCode.OK)
         }
 
         post("/extension") {
             val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
             val extensionRequestData = call.receive<ExtensionRequestData>()
-            val extensionRequest = postExtensionRequestUseCase(extensionRequestData.asExtensionRequest(userId))
-            call.respond(HttpStatusCode.OK, extensionRequest)
+            postExtensionRequestUseCase(extensionRequestData.asExtensionRequest(userId))
+            call.respondText("연장 요청이 완료되었습니다", status = HttpStatusCode.OK)
         }
 
         get {
