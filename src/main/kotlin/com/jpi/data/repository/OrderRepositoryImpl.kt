@@ -1,14 +1,17 @@
 package com.jpi.data.repository
 
 import com.jpi.data.model.response.asEquipmentResponse
+import com.jpi.data.model.response.asNoReturnUserResponse
 import com.jpi.data.model.response.asOrderResponse
 import com.jpi.domain.entity.Equipment
 import com.jpi.domain.util.State
 import com.jpi.domain.entity.Order
+import com.jpi.domain.entity.User
 import com.jpi.domain.model.request.DecideRequest
 import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.request.OrderRequest
 import com.jpi.domain.model.response.EquipmentResponse
+import com.jpi.domain.model.response.NoReturnUserResponse
 import com.jpi.domain.model.response.OrderResponse
 import com.jpi.domain.repository.OrderRepository
 import com.jpi.domain.util.Decide
@@ -82,6 +85,13 @@ class OrderRepositoryImpl: OrderRepository {
             Decide.REJECT -> {
                 Order.deleteWhere { (this.userId eq decideRequest.userId) and (this.equipmentId eq decideRequest.equipmentId) }
             }
+        }
+    }
+
+    override suspend fun getNoReturnUserList(): List<NoReturnUserResponse> = dbQuery {
+        val userId = Order.select { Order.returnDate.less(LocalDateTime.now()) }.map { it[Order.userId] }
+        userId.map { id ->
+            User.select { User.id eq id }.map { it.asNoReturnUserResponse() }.single()
         }
     }
 }

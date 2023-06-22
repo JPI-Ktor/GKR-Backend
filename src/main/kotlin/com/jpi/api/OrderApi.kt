@@ -22,6 +22,7 @@ fun Route.orderRoute() {
     val getRentalEquipmentUseCase: GetRentalEquipmentUseCase by inject()
     val getUUIDUseCase: GetUUIDUseCase by inject()
     val decideAcceptOrRejectUseCase: DecideAcceptOrRejectUseCase by inject()
+    val getNoReturnUserListUseCase: GetNoReturnUserListUseCase by inject()
 
     route("/order") {
         get("/rental") {
@@ -75,6 +76,13 @@ fun Route.orderRoute() {
             val decideRequestData = call.receive<DecideRequestData>()
             decideAcceptOrRejectUseCase(decideRequestData.asDecideRequest(userId))
             call.respondText("요청 결과가 나왔습니다", status = HttpStatusCode.OK)
+        }
+
+        get("/noreturn") {
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
+            val noReturnUserList = getNoReturnUserListUseCase()
+            if (noReturnUserList.isEmpty()) return@get call.respondText("Not Found NoReturnUserList", status = HttpStatusCode.NotFound)
+            call.respond(HttpStatusCode.OK, noReturnUserList)
         }
     }
 }
