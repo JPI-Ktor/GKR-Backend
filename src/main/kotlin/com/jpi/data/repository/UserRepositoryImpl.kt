@@ -28,12 +28,6 @@ class UserRepositoryImpl(private val client: HttpClient): UserRepository {
         User.selectAll().map { it.asUserResponse() }
     }
 
-    override suspend fun restrictRental(id: UUID): Unit = dbQuery {
-        User.update({User.id eq id}) {
-            it[isRentalRestricted] = true
-        }
-    }
-
     override suspend fun getUUID(accessToken: String): UUID? = dbQuery {
         val gAuthUserInfo = client.get("https://open.gauth.co.kr/user") {
             contentType(ContentType.Application.Json)

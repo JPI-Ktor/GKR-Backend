@@ -8,8 +8,6 @@ interface UserRepository {
 
     suspend fun getAllStudents(): List<UserResponse>
 
-    suspend fun restrictRental(id: UUID)
-
     suspend fun getUUID(accessToken: String): UUID?
 
     suspend fun logout(id: UUID)

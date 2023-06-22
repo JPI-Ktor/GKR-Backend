@@ -2,6 +2,7 @@ package com.jpi.api
 
 import com.jpi.api.util.getAccessToken
 import com.jpi.domain.model.request.EquipmentRequest
+import com.jpi.domain.model.request.ModifyEquipmentRequest
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.equipment.*
 import com.jpi.domain.usecase.user.IsAdminUseCase
@@ -18,6 +19,7 @@ fun Route.equipmentRoute() {
     val getIsRentEquipmentUseCase: GetIsRentEquipmentUseCase by inject()
     val equipmentUseCase: EquipmentInfoUseCase by inject()
     val addEquipmentUseCase: AddEquipmentUseCase by inject()
+    val modifyEquipmentUseCase: ModifyEquipmentUseCase by inject()
     val deleteEquipmentUseCase: DeleteEquipmentUseCase by inject()
 
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
@@ -35,9 +37,9 @@ fun Route.equipmentRoute() {
         }
 
         post {
-            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
             val equipment = call.receiveNullable<EquipmentRequest>()
-                    ?: return@post call.respondText(text = "잘못된 요청입니다.", status = HttpStatusCode.BadRequest)
+                ?: return@post call.respondText(text = "잘못된 요청입니다.", status = HttpStatusCode.BadRequest)
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
             if (!isAdminUseCase(accessToken))
                 return@post call.respondText(text = "권한이 없습니다.", status = HttpStatusCode.Forbidden)
 
@@ -73,6 +75,22 @@ fun Route.equipmentRoute() {
                     ?: return@get call.respondText(text = "없는 기자재 입니다.", status = HttpStatusCode.NotFound)
 
             call.respond(status = HttpStatusCode.OK, message = equipmentInfo)
+        }
+
+        patch("/{productNumber}") {
+            val productNumber = call.parameters["productNumber"].toString()
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@patch
+            if (!isAdminUseCase(accessToken))
+                return@patch call.respondText(text = "권한이 없습니다.", status = HttpStatusCode.Forbidden)
+
+            val equipment = call.receiveNullable<ModifyEquipmentRequest>()
+                ?: return@patch call.respondText(text = "잘못된 요청입니다.", status = HttpStatusCode.BadRequest)
+
+            val modifyEquipment = modifyEquipmentUseCase(productNumber = productNumber, equipmentRequest = equipment)
+            if (!modifyEquipment)
+                return@patch call.respondText(status = HttpStatusCode.NotFound, text = "없는 기자재 입니다.")
+
+            call.respondText(status = HttpStatusCode.NoContent, text = "")
         }
 
         delete("/{productNumber}") {

@@ -17,7 +17,6 @@ fun Route.userRoute() {
     val getStudentUseCase: GetStudentUseCase by inject()
     val getAllStudentUseCase: GetAllStudentUseCase by inject()
     val getEmailByTokenUseCase: GetEmailByTokenUseCase by inject()
-    val restrictRentalUseCase: RestrictRentalUseCase by inject()
     val getUUIDUseCase: GetUUIDUseCase by inject()
     val logoutUseCase: LogoutUseCase by inject()
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
@@ -41,19 +40,6 @@ fun Route.userRoute() {
             val allStudents = getAllStudentUseCase()
 
             call.respond(status = HttpStatusCode.OK, message = allStudents)
-        }
-        patch("/restrict") {
-            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@patch
-            val userRequest = call.receiveNullable<UserRequest>() ?: return@patch call.respondText(
-                status = HttpStatusCode.BadRequest,
-                text = "잘못된 요청입니다."
-            )
-            if (!isAdminUseCase(accessToken)) call.respondText(
-                status = HttpStatusCode.Forbidden,
-                text = "권한이 없습니다."
-            )
-            restrictRentalUseCase(id = UUID.fromString(userRequest.id))
-            call.respondText(status = HttpStatusCode.OK, text = "학생을 제재하였습니다.")
         }
         delete("/logout") {
             val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@delete

@@ -15,6 +15,5 @@ data class UserResponse(
     val classNum: Int?,
     val number: Int?,
     val profileUrl: String?,
-    val role: Role,
-    val isRentalRestricted: Boolean
+    val role: Role
 )

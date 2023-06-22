@@ -12,7 +12,6 @@ object User: Table() {
     val number = integer("number").nullable()
     val profileUrl = text("profile_url").nullable()
     val role = enumerationByName("role", 14, Role::class)
-    val isRentalRestricted = bool("is_rental_restricted")
 
     override val primaryKey = PrimaryKey(id)
 }
