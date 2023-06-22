@@ -3,12 +3,14 @@ package com.jpi.data.repository
 import com.jpi.data.model.response.asEquipmentResponse
 import com.jpi.domain.entity.Equipment
 import com.jpi.domain.model.request.EquipmentRequest
+import com.jpi.domain.model.request.ModifyEquipmentRequest
 import com.jpi.domain.model.response.EquipmentResponse
 import com.jpi.domain.repository.EquipmentRepository
 import com.jpi.domain.util.RentStatus
 import com.jpi.server.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class EquipmentRepositoryImpl: EquipmentRepository {
     override suspend fun getAllEquipment(): List<EquipmentResponse> = dbQuery {
@@ -43,6 +45,17 @@ class EquipmentRepositoryImpl: EquipmentRepository {
                 it[description] = equipmentRequest.description
                 it[rentStatus] = RentStatus.NOT_RENT
             }
+        }
+    }
+
+    override suspend fun modifyEquipment(productNumber: String, equipmentRequest: ModifyEquipmentRequest): Boolean = dbQuery {
+        transaction {
+            Equipment.update({ Equipment.productNumber eq productNumber }) {
+                it[name] = equipmentRequest.name
+                it[image] = equipmentRequest.image
+                it[description] = equipmentRequest.description
+                it[rentStatus] = rentStatus
+            } > 0
         }
     }
 
