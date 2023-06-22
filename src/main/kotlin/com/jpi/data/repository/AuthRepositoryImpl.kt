@@ -110,7 +110,6 @@ class AuthRepositoryImpl(private val client: HttpClient) : AuthRepository {
                 it[number] = gAuthUserInfo.number
                 it[profileUrl] = gAuthUserInfo.profileUrl
                 it[role] = gAuthUserInfo.role
-                it[isRentalRestricted] = false
             }
             RefreshToken.insert {
                 it[id] = uuid

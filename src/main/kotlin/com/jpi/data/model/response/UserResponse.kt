@@ -13,5 +13,4 @@ fun ResultRow.asUserResponse() = UserResponse(
     number = this[User.number],
     profileUrl = this[User.profileUrl],
     role = this[User.role],
-    isRentalRestricted = this[User.isRentalRestricted]
 )
