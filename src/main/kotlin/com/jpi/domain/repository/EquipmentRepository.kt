@@ -18,4 +18,6 @@ interface EquipmentRepository {
     suspend fun modifyEquipment(productNumber: String, equipmentRequest: ModifyEquipmentRequest): Boolean
 
     suspend fun deleteEquipment(productNumber: String): Boolean
+
+    suspend fun equipmentFilter(propertyProductNumber: String): List<EquipmentResponse>
 }

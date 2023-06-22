@@ -62,4 +62,11 @@ class EquipmentRepositoryImpl: EquipmentRepository {
     override suspend fun deleteEquipment(productNumber: String): Boolean = dbQuery {
         Equipment.deleteWhere { Equipment.productNumber eq productNumber } > 0
     }
+
+    override suspend fun equipmentFilter(propertyProductNumber: String): List<EquipmentResponse> = dbQuery {
+        Equipment.select { Equipment.productNumber like "%${propertyProductNumber}%" }
+            .map {
+                it.asEquipmentResponse()
+            }
+    }
 }
