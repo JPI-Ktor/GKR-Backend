@@ -109,7 +109,7 @@ fun Route.equipmentRoute() {
         }
 
         get {
-            val productName = call.request.queryParameters["productName"] ?: ""
+            val productName = call.request.queryParameters["name"] ?: ""
 
             val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
             if (!isAdminUseCase(accessToken))
