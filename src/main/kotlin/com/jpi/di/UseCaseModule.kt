@@ -49,4 +49,5 @@ val useCaseModule = module {
     single { PostReturnRequestUseCase(get()) }
     single { PostExtensionRequestUseCase(get()) }
     single { GetRentalEquipmentUseCase(get()) }
+    single { DecideAcceptOrRejectUseCase(get()) }
 }
