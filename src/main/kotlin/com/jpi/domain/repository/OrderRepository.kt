@@ -15,7 +15,7 @@ interface OrderRepository {
 
     suspend fun getRentalRequestList(): List<OrderResponse>
 
-    suspend fun getReturnRequestList(): List<OrderResponse>
+    suspend fun getWaitRequestList(): List<OrderResponse>
 
     suspend fun getRentalEquipment(userId: UUID): List<EquipmentResponse>
 
