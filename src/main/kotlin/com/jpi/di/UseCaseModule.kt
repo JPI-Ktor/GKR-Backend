@@ -11,13 +11,14 @@ import com.jpi.domain.usecase.repair.DeleteRepairHistoryUseCase
 import com.jpi.domain.usecase.repair.GetRepairHistoryUseCase
 import com.jpi.domain.usecase.repair.ModifyRepairHistoryUseCase
 import com.jpi.domain.usecase.user.*
+import com.jpi.domain.usecase.violation.GetViolationUseCase
+import com.jpi.domain.usecase.violation.RentalViolationUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
     // User
     single { GetStudentUseCase(get()) }
     single { GetAllStudentUseCase(get()) }
-    single { RestrictRentalUseCase(get()) }
     single { GetUUIDUseCase(get()) }
     single { LogoutUseCase(get()) }
     single { IsAdminUseCase(get()) }
@@ -51,4 +52,8 @@ val useCaseModule = module {
     single { PostExtensionRequestUseCase(get()) }
     single { GetRentalEquipmentUseCase(get()) }
     single { DecideAcceptOrRejectUseCase(get()) }
+
+    // Violation
+    single { GetViolationUseCase(get()) }
+    single { RentalViolationUseCase(get()) }
 }

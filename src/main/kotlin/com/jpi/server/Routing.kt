@@ -11,5 +11,6 @@ fun Application.configureRouting() {
         equipmentRoute()
         orderRoute()
         repairRoute()
+        violationRoute()
     }
 }
