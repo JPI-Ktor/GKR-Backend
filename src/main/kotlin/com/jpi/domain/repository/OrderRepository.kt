@@ -1,5 +1,6 @@
 package com.jpi.domain.repository
 
+import com.jpi.domain.model.request.DecideRequest
 import com.jpi.domain.model.request.OrderRequest
 import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.response.EquipmentResponse
@@ -19,5 +20,5 @@ interface OrderRepository {
 
     suspend fun getRentalEquipment(userId: UUID): List<EquipmentResponse>
 
-    suspend fun decideAcceptOrReject(orderRequest: OrderRequest, extensionRequest: ExtensionRequest)
+    suspend fun decideAcceptOrReject(decideRequest: DecideRequest)
 }

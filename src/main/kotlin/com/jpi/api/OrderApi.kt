@@ -1,10 +1,7 @@
 package com.jpi.api
 
 import com.jpi.api.util.getAccessToken
-import com.jpi.data.model.request.ExtensionRequestData
-import com.jpi.data.model.request.OrderRequestData
-import com.jpi.data.model.request.asExtensionRequest
-import com.jpi.data.model.request.asOrderRequest
+import com.jpi.data.model.request.*
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.order.*
 import com.jpi.domain.usecase.user.GetUUIDUseCase
@@ -24,6 +21,7 @@ fun Route.orderRoute() {
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
     val getRentalEquipmentUseCase: GetRentalEquipmentUseCase by inject()
     val getUUIDUseCase: GetUUIDUseCase by inject()
+    val decideAcceptOrRejectUseCase: DecideAcceptOrRejectUseCase by inject()
 
     route("/order") {
         get("/rental") {
@@ -69,6 +67,14 @@ fun Route.orderRoute() {
             val userId = getUUIDUseCase(accessToken) ?: return@get call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
             val equipmentList = getRentalEquipmentUseCase(userId)
             call.respond(HttpStatusCode.OK, equipmentList)
+        }
+
+        post {
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
+            val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val decideRequestData = call.receive<DecideRequestData>()
+            decideAcceptOrRejectUseCase(decideRequestData.asDecideRequest(userId))
+            call.respondText("요청 결과가 나왔습니다", status = HttpStatusCode.OK)
         }
     }
 }

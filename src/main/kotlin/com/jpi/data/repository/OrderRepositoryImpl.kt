@@ -5,6 +5,7 @@ import com.jpi.data.model.response.asOrderResponse
 import com.jpi.domain.entity.Equipment
 import com.jpi.domain.util.State
 import com.jpi.domain.entity.Order
+import com.jpi.domain.model.request.DecideRequest
 import com.jpi.domain.model.request.ExtensionRequest
 import com.jpi.domain.model.request.OrderRequest
 import com.jpi.domain.model.response.EquipmentResponse
@@ -56,30 +57,30 @@ class OrderRepositoryImpl: OrderRepository {
         }
     }
 
-    override suspend fun decideAcceptOrReject(orderRequest: OrderRequest, extensionRequest: ExtensionRequest): Unit = dbQuery {
-        when(orderRequest.decision) {
+    override suspend fun decideAcceptOrReject(decideRequest: DecideRequest): Unit = dbQuery {
+        when(decideRequest.decision) {
             Decide.RENTAL_ACCEPT -> {
-                Order.update({ (Order.userId eq orderRequest.userId) and (Order.equipmentId eq orderRequest.equipmentId) }) {
+                Order.update({ (Order.userId eq decideRequest.userId) and (Order.equipmentId eq decideRequest.equipmentId) }) {
                     it[this.rentalState] = State.RENTAL_STATE
                     it[this.rentalDate] = LocalDateTime.now()
                 }
             }
             Decide.RETURN_ACCEPT -> {
-                Order.update({ (Order.userId eq orderRequest.userId) and (Order.equipmentId eq orderRequest.equipmentId) }) {
+                Order.update({ (Order.userId eq decideRequest.userId) and (Order.equipmentId eq decideRequest.equipmentId) }) {
                     it[this.rentalState] = State.RETURN_STATE
                     it[this.returnDate] = LocalDateTime.now()
                 }
             }
             Decide.EXTENSION_ACCEPT -> {
-                val date = Order.select { (Order.userId eq extensionRequest.userId) and (Order.equipmentId eq extensionRequest.equipmentId) }.map { it[Order.returnDate] }.single()
+                val date = Order.select { (Order.userId eq decideRequest.userId) and (Order.equipmentId eq decideRequest.equipmentId) }.map { it[Order.returnDate] }.single()
 
-                Order.update({ (Order.userId eq extensionRequest.userId) and (Order.equipmentId eq extensionRequest.equipmentId) }) {
+                Order.update({ (Order.userId eq decideRequest.userId) and (Order.equipmentId eq decideRequest.equipmentId) }) {
                     it[this.rentalState] = State.RENTAL_STATE
                     it[this.returnDate] = date.plusMonths(1)
                 }
             }
             Decide.REJECT -> {
-                Order.deleteWhere { (this.userId eq orderRequest.userId) and (this.equipmentId eq orderRequest.equipmentId) }
+                Order.deleteWhere { (this.userId eq decideRequest.userId) and (this.equipmentId eq decideRequest.equipmentId) }
             }
         }
     }
