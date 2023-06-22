@@ -21,6 +21,7 @@ fun Route.equipmentRoute() {
     val addEquipmentUseCase: AddEquipmentUseCase by inject()
     val modifyEquipmentUseCase: ModifyEquipmentUseCase by inject()
     val deleteEquipmentUseCase: DeleteEquipmentUseCase by inject()
+    val equipmentFilterUseCase: EquipmentFilterUseCase by inject()
 
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
     val isAdminUseCase: IsAdminUseCase by inject()
@@ -105,6 +106,20 @@ fun Route.equipmentRoute() {
             }
 
             call.respondText(status = HttpStatusCode.NoContent, text = "삭제 완료")
+        }
+
+        get {
+            val productName = call.request.queryParameters["name"] ?: ""
+
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
+            if (!isAdminUseCase(accessToken))
+                return@get call.respondText(text = "권한이 없습니다.", status = HttpStatusCode.Forbidden)
+
+            val equipmentFilter = equipmentFilterUseCase(productName)
+            if (equipmentFilter.isEmpty())
+                return@get call.respondText(status = HttpStatusCode.NotFound, text = "기자재가 존재하지 않습니다.")
+
+            call.respond(status = HttpStatusCode.OK, message = equipmentFilter)
         }
     }
 }

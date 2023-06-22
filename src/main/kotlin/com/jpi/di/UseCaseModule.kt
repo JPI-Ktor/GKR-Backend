@@ -43,6 +43,7 @@ val useCaseModule = module {
     single { AddEquipmentUseCase(get()) }
     single { ModifyEquipmentUseCase(get()) }
     single { DeleteEquipmentUseCase(get()) }
+    single { EquipmentFilterUseCase(get()) }
 
     // Order
     single { GetRentalRequestListUseCase(get()) }
