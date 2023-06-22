@@ -45,8 +45,8 @@ class OrderRepositoryImpl: OrderRepository {
         Order.select { Order.rentalState eq State.RENTAL_STATE }.map { it.asOrderResponse() }
     }
 
-    override suspend fun getReturnRequestList(): List<OrderResponse> = dbQuery {
-        Order.select { Order.rentalState eq State.RETURN_STATE }.map { it.asOrderResponse() }
+    override suspend fun getWaitRequestList(): List<OrderResponse> = dbQuery {
+        Order.select { Order.rentalState eq State.WAITING_STATE }.map { it.asOrderResponse() }
     }
 
     override suspend fun getRentalEquipment(userId: UUID): List<EquipmentResponse> = dbQuery {
@@ -57,19 +57,11 @@ class OrderRepositoryImpl: OrderRepository {
     }
 
     override suspend fun decideAcceptOrReject(orderRequest: OrderRequest, extensionRequest: ExtensionRequest): Unit = dbQuery {
-        if (orderRequest.decision == Decide.REJECT) {
-            Order.deleteWhere { (this.userId eq orderRequest.userId) and (this.equipmentId eq orderRequest.equipmentId) }
-        } else {
-            Order.update({ (Order.userId eq orderRequest.userId) and (Order.equipmentId eq orderRequest.equipmentId) }) {
-                it[this.rentalState] = State.RENTAL_STATE
-                it[this.returnDate] = LocalDateTime.now()
-            }
-        }
         when(orderRequest.decision) {
             Decide.RENTAL_ACCEPT -> {
                 Order.update({ (Order.userId eq orderRequest.userId) and (Order.equipmentId eq orderRequest.equipmentId) }) {
                     it[this.rentalState] = State.RENTAL_STATE
-                    it[this.returnDate] = LocalDateTime.now()
+                    it[this.rentalDate] = LocalDateTime.now()
                 }
             }
             Decide.RETURN_ACCEPT -> {
