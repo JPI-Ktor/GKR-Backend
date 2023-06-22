@@ -1,17 +1,14 @@
 package com.jpi.domain.model.request
 
-import com.jpi.domain.util.State
 import com.jpi.domain.model.util.UUIDSerializer
 import com.jpi.domain.util.Decide
 import kotlinx.serialization.Serializable
-import java.util.UUID
+import java.util.*
 
 @Serializable
-data class OrderRequest(
+data class DecideRequest(
     @Serializable(with = UUIDSerializer::class)
     val userId: UUID,
     val equipmentId: String,
-    val reason: String,
-    val state: State,
     val decision: Decide
 )

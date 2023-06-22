@@ -1,10 +1,10 @@
 package com.jpi.api
 
 import com.jpi.api.util.getAccessToken
-import com.jpi.domain.model.request.ExtensionRequest
-import com.jpi.domain.model.request.OrderRequest
+import com.jpi.data.model.request.*
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.order.*
+import com.jpi.domain.usecase.user.GetUUIDUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -14,11 +14,14 @@ import org.koin.ktor.ext.inject
 
 fun Route.orderRoute() {
     val getRentalRequestListUseCase: GetRentalRequestListUseCase by inject()
-    val getReturnRequestListUseCase: GetReturnRequestListUseCase by inject()
+    val getWaitRequestListUseCase: GetWaitRequestListUseCase by inject()
     val postExtensionRequestUseCase: PostExtensionRequestUseCase by inject()
     val postRentalRequestUseCase: PostRentalRequestUseCase by inject()
     val postReturnRequestUseCase: PostReturnRequestUseCase by inject()
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
+    val getRentalEquipmentUseCase: GetRentalEquipmentUseCase by inject()
+    val getUUIDUseCase: GetUUIDUseCase by inject()
+    val decideAcceptOrRejectUseCase: DecideAcceptOrRejectUseCase by inject()
 
     route("/order") {
         get("/rental") {
@@ -28,32 +31,50 @@ fun Route.orderRoute() {
             call.respond(HttpStatusCode.OK, rentalRequestList)
         }
 
-        get("/return") {
+        get("/wait") {
             getAccessToken { isTokenValidUseCase(it) } ?: return@get
-            val returnRequestList = getReturnRequestListUseCase()
-            if (returnRequestList.isEmpty()) return@get call.respondText("Not Found ReturnRequestList", status = HttpStatusCode.NotFound)
-            call.respond(HttpStatusCode.OK, returnRequestList)
+            val waitRequestList = getWaitRequestListUseCase()
+            if (waitRequestList.isEmpty()) return@get call.respondText("Not Found ReturnRequestList", status = HttpStatusCode.NotFound)
+            call.respond(HttpStatusCode.OK, waitRequestList)
         }
 
         post("/rental") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@post
-            val orderRequest = call.receive<OrderRequest>()
-            val rentalRequest = postRentalRequestUseCase(orderRequest)
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
+            val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val orderRequestData = call.receive<OrderRequestData>()
+            val rentalRequest = postRentalRequestUseCase(orderRequestData.asOrderRequest(userId))
             call.respond(HttpStatusCode.OK, rentalRequest)
         }
 
         post("/return") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@post
-            val orderRequest = call.receive<OrderRequest>()
-            val returnRequest = postReturnRequestUseCase(orderRequest)
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
+            val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val orderRequestData = call.receive<OrderRequestData>()
+            val returnRequest = postReturnRequestUseCase(orderRequestData.asOrderRequest(userId))
             call.respond(HttpStatusCode.OK, returnRequest)
         }
 
         post("/extension") {
-            getAccessToken { isTokenValidUseCase(it) } ?: return@post
-            val orderRequest = call.receive<ExtensionRequest>()
-            val extensionRequest = postExtensionRequestUseCase(orderRequest)
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
+            val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val extensionRequestData = call.receive<ExtensionRequestData>()
+            val extensionRequest = postExtensionRequestUseCase(extensionRequestData.asExtensionRequest(userId))
             call.respond(HttpStatusCode.OK, extensionRequest)
+        }
+
+        get {
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
+            val userId = getUUIDUseCase(accessToken) ?: return@get call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val equipmentList = getRentalEquipmentUseCase(userId)
+            call.respond(HttpStatusCode.OK, equipmentList)
+        }
+
+        post {
+            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@post
+            val userId = getUUIDUseCase(accessToken) ?: return@post call.respondText("Not Found UUID", status = HttpStatusCode.NotFound)
+            val decideRequestData = call.receive<DecideRequestData>()
+            decideAcceptOrRejectUseCase(decideRequestData.asDecideRequest(userId))
+            call.respondText("요청 결과가 나왔습니다", status = HttpStatusCode.OK)
         }
     }
 }

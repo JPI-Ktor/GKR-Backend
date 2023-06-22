@@ -44,8 +44,10 @@ val useCaseModule = module {
 
     // Order
     single { GetRentalRequestListUseCase(get()) }
-    single { GetReturnRequestListUseCase(get()) }
+    single { GetWaitRequestListUseCase(get()) }
     single { PostRentalRequestUseCase(get()) }
     single { PostReturnRequestUseCase(get()) }
     single { PostExtensionRequestUseCase(get()) }
+    single { GetRentalEquipmentUseCase(get()) }
+    single { DecideAcceptOrRejectUseCase(get()) }
 }
