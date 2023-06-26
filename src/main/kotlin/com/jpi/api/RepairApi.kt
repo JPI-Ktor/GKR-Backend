@@ -1,7 +1,6 @@
 package com.jpi.api
 
 import com.jpi.api.util.getAccessToken
-import com.jpi.data.model.request.RepairRequestData
 import com.jpi.domain.model.request.RepairRequest
 import com.jpi.domain.usecase.auth.IsTokenValidUseCase
 import com.jpi.domain.usecase.repair.AddRepairHistoryUseCase
@@ -36,11 +35,11 @@ fun Route.repairRoute() {
         get {
             getAccessToken { isTokenValidUseCase(it) } ?: return@get
 
-            val repairRequest = call.receiveNullable<RepairRequestData>() ?: return@get call.respondText(
+            val productNumber = call.request.queryParameters["productNumber"] ?: return@get call.respondText(
                 status = HttpStatusCode.BadRequest,
                 text = "잘못된 요청입니다."
             )
-            val repairHistory = getRepairHistoryUseCase(productNumber = repairRequest.productNumber)
+            val repairHistory = getRepairHistoryUseCase(productNumber = productNumber)
                 ?: return@get call.respondText(status = HttpStatusCode.NotFound, text = "수리 내역을 찾지 못했습니다.")
 
             call.respond(status = HttpStatusCode.OK, repairHistory)
@@ -58,11 +57,11 @@ fun Route.repairRoute() {
         delete {
             getAccessToken { isTokenValidUseCase(it) } ?: return@delete
 
-            val repairRequest = call.receiveNullable<RepairRequestData>() ?: return@delete call.respondText(
+            val productNumber = call.request.queryParameters["productNumber"] ?: return@delete call.respondText(
                 status = HttpStatusCode.BadRequest,
                 text = "잘못된 요청입니다."
             )
-            deleteRepairHistoryUseCase(productNumber = repairRequest.productNumber)
+            deleteRepairHistoryUseCase(productNumber = productNumber)
             call.respondText(status = HttpStatusCode.OK, text = "수리 내역을 성공적으로 삭제하였습니다.")
         }
     }
