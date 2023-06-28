@@ -22,7 +22,6 @@ fun Route.equipmentRoute() {
     val modifyEquipmentUseCase: ModifyEquipmentUseCase by inject()
     val deleteEquipmentUseCase: DeleteEquipmentUseCase by inject()
     val equipmentFilterUseCase: EquipmentFilterUseCase by inject()
-
     val isTokenValidUseCase: IsTokenValidUseCase by inject()
     val isAdminUseCase: IsAdminUseCase by inject()
 
