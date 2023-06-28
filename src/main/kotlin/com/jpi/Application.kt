@@ -9,7 +9,7 @@ import com.jpi.server.configureRouting
 import com.jpi.server.configureSerialization
 
 fun main() {
-    embeddedServer(Netty, port = 443, host = "https://port-0-gkr-backend-dihik2mljfecyah.sel4.cloudtype.app", module = Application::module)
+    embeddedServer(Netty, port = 80, host = "54.180.97.89", module = Application::module)
         .start(wait = true)
 }
 
