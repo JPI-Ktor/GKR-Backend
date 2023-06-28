@@ -41,4 +41,5 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2")
 }
