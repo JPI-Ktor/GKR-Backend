@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.ResultRow
 
 fun ResultRow.asNoReturnUserResponse() = NoReturnUserResponse (
     id = this[User.id],
+    profileUrl = this[User.profileUrl],
     name = this[User.name],
     grade = this[User.grade],
     classNum = this[User.classNum],

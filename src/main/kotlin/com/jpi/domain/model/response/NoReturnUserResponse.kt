@@ -9,6 +9,7 @@ import java.util.*
 data class NoReturnUserResponse(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID,
+    val profileUrl: String?,
     val name: String,
     val grade: Int?,
     val classNum: Int?,
