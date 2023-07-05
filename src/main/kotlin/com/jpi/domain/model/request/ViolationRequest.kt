@@ -8,6 +8,5 @@ import java.util.UUID
 data class ViolationRequest(
     @Serializable(with = UUIDSerializer::class)
     val userId: UUID,
-    val reason: String,
-    val date: String
+    val reason: String
 )

@@ -16,7 +16,7 @@ class ViolationRepositoryImpl: ViolationRepository {
         Violation.insert {
             it[userId] = violationRequest.userId
             it[reason] = violationRequest.reason
-            it[date] = LocalDate.parse(violationRequest.date)
+            it[date] = LocalDate.now()
         }
     }
 
