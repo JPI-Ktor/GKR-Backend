@@ -81,7 +81,6 @@ fun Route.orderRoute() {
         get("/noreturn") {
             getAccessToken { isTokenValidUseCase(it) } ?: return@get
             val noReturnUserList = getNoReturnUserListUseCase()
-            if (noReturnUserList.isEmpty()) return@get call.respondText("Not Found NoReturnUserList", status = HttpStatusCode.NotFound)
             call.respond(HttpStatusCode.OK, noReturnUserList)
         }
     }
