@@ -40,7 +40,6 @@ fun Route.repairRoute() {
                 text = "잘못된 요청입니다."
             )
             val repairHistory = getRepairHistoryUseCase(productNumber = productNumber)
-                ?: return@get call.respondText(status = HttpStatusCode.NotFound, text = "수리 내역을 찾지 못했습니다.")
 
             call.respond(status = HttpStatusCode.OK, repairHistory)
         }

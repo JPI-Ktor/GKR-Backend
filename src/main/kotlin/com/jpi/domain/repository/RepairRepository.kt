@@ -6,7 +6,7 @@ import com.jpi.domain.model.response.RepairResponse
 interface RepairRepository {
     suspend fun addRepairHistory(repairRequest: RepairRequest)
 
-    suspend fun getRepairHistory(productNumber: String): RepairResponse?
+    suspend fun getRepairHistory(productNumber: String): List<RepairResponse>
 
     suspend fun modifyRepairHistory(repairRequest: RepairRequest)
 

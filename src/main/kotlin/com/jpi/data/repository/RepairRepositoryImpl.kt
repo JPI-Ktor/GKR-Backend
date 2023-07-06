@@ -24,10 +24,9 @@ class RepairRepositoryImpl: RepairRepository {
         }
     }
 
-    override suspend fun getRepairHistory(productNumber: String): RepairResponse? = dbQuery {
+    override suspend fun getRepairHistory(productNumber: String): List<RepairResponse> = dbQuery {
         Repair.select { Repair.productNumber eq productNumber }
             .map { it.asRepairResponse() }
-            .singleOrNull()
     }
 
     override suspend fun modifyRepairHistory(repairRequest: RepairRequest): Unit = dbQuery {
