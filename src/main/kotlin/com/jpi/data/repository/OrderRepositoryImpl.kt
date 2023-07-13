@@ -15,6 +15,7 @@ import com.jpi.domain.model.response.NoReturnUserResponse
 import com.jpi.domain.model.response.OrderResponse
 import com.jpi.domain.repository.OrderRepository
 import com.jpi.domain.util.Decide
+import com.jpi.domain.util.RentStatus
 import com.jpi.server.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -54,9 +55,9 @@ class OrderRepositoryImpl: OrderRepository {
     }
 
     override suspend fun getRentalEquipment(userId: UUID): List<EquipmentResponse> = dbQuery {
-        val equipmentIdList = Order.select { Order.userId eq userId }.map { it[Order.equipmentId] }
+        val equipmentIdList = Order.select { (Order.userId eq userId) and (Order.rentalState eq State.RENTAL_STATE) }.map { it[Order.equipmentId] }
         equipmentIdList.map { equipmentId ->
-            Equipment.select { Equipment.productNumber eq equipmentId }.map { it.asEquipmentResponse() }.single()
+            Equipment.select { (Equipment.productNumber eq equipmentId) }.map { it.asEquipmentResponse() }.single()
         }
     }
 
