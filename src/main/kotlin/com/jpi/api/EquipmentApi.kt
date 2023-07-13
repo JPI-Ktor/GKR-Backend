@@ -110,9 +110,7 @@ fun Route.equipmentRoute() {
         get {
             val productName = call.request.queryParameters["name"] ?: ""
 
-            val accessToken = getAccessToken { isTokenValidUseCase(it) } ?: return@get
-            if (!isAdminUseCase(accessToken))
-                return@get call.respondText(text = "권한이 없습니다.", status = HttpStatusCode.Forbidden)
+            getAccessToken { isTokenValidUseCase(it) } ?: return@get
 
             val equipmentFilter = equipmentFilterUseCase(productName)
             if (equipmentFilter.isEmpty())
