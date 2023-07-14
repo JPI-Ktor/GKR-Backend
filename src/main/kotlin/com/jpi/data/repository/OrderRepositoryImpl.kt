@@ -15,7 +15,6 @@ import com.jpi.domain.model.response.NoReturnUserResponse
 import com.jpi.domain.model.response.OrderResponse
 import com.jpi.domain.repository.OrderRepository
 import com.jpi.domain.util.Decide
-import com.jpi.domain.util.RentStatus
 import com.jpi.server.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -64,7 +63,7 @@ class OrderRepositoryImpl: OrderRepository {
     override suspend fun decideAcceptOrReject(decideRequest: DecideRequest): Unit = dbQuery {
         when(decideRequest.decision) {
             Decide.RENTAL_ACCEPT -> {
-                Order.update({ (Order.userId eq decideRequest.userId) and (Order.equipmentId eq decideRequest.equipmentId) }) {
+                Order.update({ Order.equipmentId eq decideRequest.equipmentId }) {
                     it[this.rentalState] = State.RENTAL_STATE
                     it[this.rentalDate] = LocalDateTime.now()
                 }
